@@ -1,0 +1,95 @@
+MDFloatLayout:
+    MDLabel:
+        id: task_label
+        halign: 'center'
+        markup: True
+        text: "[u][size=48][b]Tasks[/b][/size][/u]"
+        pos_hint: {'y': .45}
+
+    ScrollView:
+        pos_hint: {'center_y': .5, 'center_x': .5}
+        size_hint: .9, .8
+
+        MDList:
+            id: container
+
+    MDFloatingActionButton:
+        icon: 'plus-thick'
+        on_release: app.show_task_dialog()
+        pos_hint: {"right": .98, "top": .12}
+
+
+<DialogContent>:
+    orientation: "vertical"
+    spacing: "10dp"
+    size_hint: 1, None
+    height: "100"
+
+    BoxLayout:
+        MDTextField:
+            id: task_text
+            hint_text: "Add Task..."
+            max_text_length: 50
+            on_text_validate: (app.add_task(task_text), app.close_dialog())
+
+    BoxLayout:
+        orientation: 'horizontal'
+
+        MDRaisedButton:
+            text: "SAVE"
+            on_release: (app.add_task(task_text), app.close_dialog())
+        MDFlatButton:
+            text: 'CANCEL'
+            on_release: app.close_dialog()
+
+
+<DialogChangeContent>:
+    orientation: "vertical"
+    spacing: "10dp"
+    size_hint: 1, None
+    height: "150"
+
+    BoxLayout:
+        MDTextField:
+            id: task_text
+            hint_text: "Change Task..."
+            max_text_length: 50
+
+    BoxLayout:
+        MDTextField:
+            id: task_hours
+            hint_text: "Hours"
+
+        MDTextField:
+            id: task_minutes
+            hint_text: "Minutes"
+
+    BoxLayout:
+        orientation: 'horizontal'
+
+        MDRaisedButton:
+            text: "SAVE"
+            on_release: (app.add_task(task_text), app.close_dialog())
+        MDFlatButton:
+            text: 'CANCEL'
+            on_release: app.close_dialog()
+
+
+<ListItem>:
+    id: the_list_item
+    markup: True
+    on_release: app.show_change_task_dialog(the_list_item)
+
+    IconLeftWidget:
+        icon: 'play'
+        theme_text_color: "Custom"
+        text_color: .5, .8, 0, 1
+        pos_hint: {'center_y': .5}
+        on_release: root.play(the_list_item)
+
+    IconRightWidget:
+        icon: 'trash-can-outline'
+        theme_text_color: "Custom"
+        text_color: 1, 0, 0, 1
+        pos_hint: {'center_y': .5}
+        on_release: root.delete_item(the_list_item)
