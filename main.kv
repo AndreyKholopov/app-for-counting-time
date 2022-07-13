@@ -44,6 +44,7 @@ MDFloatLayout:
 
 
 <DialogChangeContent>:
+    id: change_dialog
     orientation: "vertical"
     spacing: "10dp"
     size_hint: 1, None
@@ -54,25 +55,30 @@ MDFloatLayout:
             id: task_text
             hint_text: "Change Task..."
             max_text_length: 50
+            on_text_validate: (app.change_task(change_dialog.ids.the_list_item, task_text.text, task_minutes.text, task_hours.text), app.close_change_dialog())
 
     BoxLayout:
         MDTextField:
             id: task_hours
             hint_text: "Hours"
+            input_filter: 'int'
+            on_text_validate: (app.change_task(change_dialog.ids.the_list_item, task_text.text, task_minutes.text, task_hours.text), app.close_change_dialog())
 
         MDTextField:
             id: task_minutes
             hint_text: "Minutes"
+            input_filter: 'int'
+            on_text_validate: (app.change_task(change_dialog.ids.the_list_item, task_text.text, task_minutes.text, task_hours.text), app.close_change_dialog())
 
     BoxLayout:
         orientation: 'horizontal'
 
         MDRaisedButton:
             text: "SAVE"
-            on_release: (app.add_task(task_text), app.close_dialog())
+            on_release: (app.change_task(change_dialog.ids.the_list_item, task_text.text, task_minutes.text, task_hours.text), app.close_change_dialog())
         MDFlatButton:
             text: 'CANCEL'
-            on_release: app.close_dialog()
+            on_release: app.close_change_dialog()
 
 
 <ListItem>:
@@ -85,7 +91,7 @@ MDFloatLayout:
         theme_text_color: "Custom"
         text_color: .5, .8, 0, 1
         pos_hint: {'center_y': .5}
-        on_release: root.play(the_list_item)
+        on_release: root.play_or_pause(the_list_item, self)
 
     IconRightWidget:
         icon: 'trash-can-outline'
