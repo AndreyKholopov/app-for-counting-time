@@ -14,6 +14,7 @@ db = Database()
 class MainApp(MDApp):
     task_created_list_dialog = None
     task_changed_list_dialog = None
+    tasks = []
 
     def build(self):
         self.theme_cls.primary_palette = "DeepPurple"
@@ -51,21 +52,40 @@ class MainApp(MDApp):
         self.task_changed_list_dialog.dismiss()
         
     def on_start(self):
-        def takeFirst(elem):
-            return elem[0]
-
         try:
-            tasks = db.get_tasks()
-            tasks.sort(key=takeFirst, reverse=True)
-
-            if tasks != []:
-                for task in tasks:
-                    add_task = ListItem(pk=task[0], text=task[1], secondary_text=task[3]+':'+task[2])
-                    self.root.ids.container.add_widget(add_task)
+            self.tasks = db.get_tasks()
+            tasks = self.sort_list(self.tasks)
+            self.render_list(tasks)
 
         except Exception as e:
             print(e)
             pass
+
+    def filter_tasks(self, filter_by):
+        self.root.ids.container.clear_widgets()
+        tasks = self.sort_list(self.filter_list(self.tasks, filter_by))
+        self.render_list(tasks)
+
+    def filter_list(self, filtered_list, filter_by):
+        def filter_name(item):
+            res = str.__contains__(item[1], filter_by)
+            return res
+
+        res = list(filter(filter_name, filtered_list))      
+        return res
+    
+    def sort_list(self, list):
+        def takeFirst(elem):
+            return elem[0]
+
+        list.sort(key=takeFirst, reverse=True)
+        return list
+
+    def render_list(self, list):
+        if list != []:
+            for task in list:
+                add_task = ListItem(pk=task[0], text=task[1], secondary_text=task[3]+':'+task[2])
+                self.root.ids.container.add_widget(add_task)
 
     def add_task(self, task):
         created_task = db.create_task(task.text, 0, 0)
