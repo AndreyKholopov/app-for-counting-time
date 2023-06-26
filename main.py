@@ -68,7 +68,7 @@ class MainApp(MDApp):
 
     def filter_list(self, filtered_list, filter_by):
         def filter_name(item):
-            res = str.__contains__(item[1], filter_by)
+            res = str.__contains__(item[1].lower(), filter_by)
             return res
 
         res = list(filter(filter_name, filtered_list))      
